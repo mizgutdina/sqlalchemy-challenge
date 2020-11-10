@@ -48,20 +48,80 @@ def welcome():
     )
 
 @app.route("/api/v1.0/precipitation")
-def names():
-    # Create our session (link) from Python to the DB
+def prcps():
+    # Create session (link) from Python to the DB
     session = Session(engine)
 
-    """Return a list of all passenger names"""
-    # Query all passengers NOT SURE WHAT TO PUT HERE??????????????>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    
+    # Convert the query results to a dictionary using date as the key and prcp as the value.
     results = session.query(Measurement.date, Measurement.prcp).filter(Measurement.date>='2016-08-23').all()
 
     session.close()
 
     # Convert list of tuples into normal list
-    all_names = list(np.ravel(results))
+    all_prcps = list(np.ravel(results))
+    
+    # Return the JSON representation of your dictionary.
+    return jsonify(all_prcps)
 
-    return jsonify(all_names)
+@app.route("/api/v1.0/stations")
+def stations():
+    # Create session (link) from Python to the DB
+    session = Session(engine)
+
+    
+    # Return a JSON list of stations from the dataset.
+    just_station_names = session.query(Station.id, Station.station, Station.name).all()
+
+
+    session.close()
+
+    # Convert list of tuples into normal list
+    all_stations = list(np.ravel(just_station_names))
+    
+    # Return the JSON representation of your dictionary.
+    return jsonify(all_stations)
+
+
+
+@app.route("/api/v1.0/tobs")
+def tobs():
+    # Create session (link) from Python to the DB
+    session = Session(engine)
+
+    
+    # Return a JSON list of stations from the dataset.
+    temp_data = session.query(Measurement.date, Measurement.tobs).filter(Measurement.station=='USC00519281').filter(Measurement.date>='2016-08-23').all()
+
+
+    session.close()
+
+    # Convert list of tuples into normal list
+    all_tobs = list(np.ravel(temp_data))
+    
+    # Return the JSON representation of your dictionary.
+    return jsonify(all_tobs)
+
+
+# @app.route("/api/v1.0/temp/start/end")
+# def temps():
+#     # Create session (link) from Python to the DB
+#     session = Session(engine)
+
+    
+#     # Return a JSON list of stations from the dataset.
+#     start_only = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.station=='USC00519281').filter(Measurement.date == ?????????????).all()
+
+
+#     session.close()
+
+#     # Convert list of tuples into normal list
+#     all_temps = list(np.ravel(start_only))
+    
+#     # Return the JSON representation of your dictionary.
+#     return jsonify(all_temps)
+
+
 
 
 # @app.route("/api/v1.0/passengers")
