@@ -103,48 +103,48 @@ def tobs():
     return jsonify(all_tobs)
 
 
-# @app.route("/api/v1.0/temp/start/end")
-# def temps():
-#     # Create session (link) from Python to the DB
-#     session = Session(engine)
+@app.route("/api/v1.0/temp/start/end")
+def temps():
+    # Create session (link) from Python to the DB
+    session = Session(engine)
 
+    start_date = input('Please enter vacation start date:') 
+    end_date = input('Please enter vacation end date:') 
     
-#     # Return a JSON list of stations from the dataset.
-#     start_only = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.station=='USC00519281').filter(Measurement.date == ?????????????).all()
+    # # Return Tmin, Tmax, Tavg
+    if end_date == 'NULL': 
+        start_only_results = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.station=='USC00519281').filter(Measurement.date >= start_date).all()
+        
+        session.close()
+
+        
+        all_start_only_results = []
+        for func.min, func.max, func.avg in all_start_only_results:
+            start_only_dict = {}
+            start_only_dict["TMIN"] = func.min
+            start_only_dict["TMAX"] = func.max
+            start_only_dict["TAVG"] = func.avg
+            all_start_only_results.append(start_only_dict)
+
+        return jsonify(all_start_only_results)
+
+    else:
+        end_results = session.query(func.min(Measurement.tobs), func.max(Measurement.tobs), func.avg(Measurement.tobs)).filter(Measurement.station=='USC00519281').filter(Measurement.date >= start_date, Measurement.date <= end_date).all()
+        
+        session.close()
+
+        
+        all_end_results = []
+        for func.min, func.max, func.avg in all_end_results:
+            end_dict = {}
+            end_dict["TMIN"] = func.min
+            end_dict["TMAX"] = func.max
+            end_dict["TAVG"] = func.avg
+            all_end_results.append(end_dict)
+
+        return jsonify(all_end_results)
 
 
-#     session.close()
-
-#     # Convert list of tuples into normal list
-#     all_temps = list(np.ravel(start_only))
-    
-#     # Return the JSON representation of your dictionary.
-#     return jsonify(all_temps)
-
-
-
-
-# @app.route("/api/v1.0/passengers")
-# def passengers():
-#     # Create our session (link) from Python to the DB
-#     session = Session(engine)
-
-#     """Return a list of passenger data including the name, age, and sex of each passenger"""
-#     # Query all passengers
-#     results = session.query(Passenger.name, Passenger.age, Passenger.sex).all()
-
-#     session.close()
-
-#     # Create a dictionary from the row data and append to a list of all_passengers
-#     all_passengers = []
-#     for name, age, sex in results:
-#         passenger_dict = {}
-#         passenger_dict["name"] = name
-#         passenger_dict["age"] = age
-#         passenger_dict["sex"] = sex
-#         all_passengers.append(passenger_dict)
-
-#     return jsonify(all_passengers)
 
 
 if __name__ == '__main__':
